@@ -140,7 +140,20 @@
     `;
     style.textContent = css;
     document.head.appendChild(style);
+    
+    
+    //===============[add favicon]===============//
+    const favicon = 'https://cdn-icons-png.flaticon.com/512/9396/9396415.png';
+    function setFavicons(favImg){
+        let setFavicon = document.createElement('link');
+        setFavicon.setAttribute('rel','shortcut icon');
+        setFavicon.setAttribute('href',favImg);
+        document.head.appendChild(setFavicon);
+    }
+    setFavicons(favicon);
+    //===========================================//
 
+    
     //===============[ICON REMOVER]================//
     function removeClassFromAllElements(className) {
         const elements = document.querySelectorAll(`.${className}`);
