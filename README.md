@@ -9,4 +9,4 @@ note: give tempermonkey permission to access file url,
 if tempermonkey is not installed, 
 goto this [link](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd?hl=en-US) and install it.
 
-preview:
+preview: ![screenshot](https://raw.githubusercontent.com/manoj-joshi-0/local_file_browser/main/Screenshot.png)
