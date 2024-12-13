@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         New Userscript
+// @name         File Browser
 // @namespace    http://tampermonkey.net/
 // @version      2024-08-20
 // @description  A script to enhance page appearance and structure
-// @author       You
+// @author       manoj joshi
 // @match        file://*/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=undefined
 // @grant        none
@@ -15,12 +15,19 @@
     //Creating the container
     const container = document.createElement('div');
     container.classList.add('container');
+
     //creating the sidebar
     const sidebar = document.createElement('div');
     sidebar.classList.add('sidebar');
+
+    //creating resizer
+    const resizer = document.createElement('div');
+    resizer.classList.add('resizer');
+
     //creating preview panel;
     const main = document.createElement('div');
     main.classList.add('main');
+
     //selecting table from document
     const table = document.querySelector('table');
     table.classList.add('table');
@@ -51,8 +58,11 @@
             transform: translate(-50%, -50%);
             padding: 10px;
             overflow: auto; /* Allows scrolling within the container if necessary */
+            display:flex;
         }
         .container h1{
+            position: absolute;
+            width: calc(100% - 20px);
             font-family: 'JetBrainsMono Nerd Font';
             font-size: 1.3em;
             background: #303030;
@@ -61,10 +71,11 @@
             padding: 5px 20px;
         }
         .sidebar{
-            position: absolute;
+            position: relative;
+            margin-top:50px;
             width: 200px;
             background: #303030;
-            height: calc(100% - 70px);
+            height: calc(100% - 50px);
             border-radius: 5px;
             overflow: hidden;
         }
@@ -82,12 +93,13 @@
             text-align: center;
             padding: 5px;
             color: white;
+            text-decoration: none;
         }
         #parentDirLinkBox a span{
             font-family: 'JetBrainsMono Nerd Font';
         }
         .table{
-           width: 300px;
+           width: 100%;
         }
         .table thead{
             display: none;
@@ -98,6 +110,7 @@
         .table tbody tr{
             padding: 5px 0px;
             height: 30px;
+            width: 100%;
         }
         .table tbody tr td:has(a){
             position: absolute;
@@ -105,7 +118,7 @@
             overflow: hidden;
             padding: 5px;
             height: 30px;
-            width: 180px;
+            width: 100%;
             left: 10px;
             border-radius: 5px;
             -webkit-mask-image: linear-gradient(90deg, #000 80%, transparent);
@@ -121,12 +134,19 @@
         .table tbody tr:hover{
             background: #505050;
         }
-        .main{
-            position: absolute;
-            width: calc(100% - 230px);
-            left: 220px;
-            background: #303030;
+        .resizer{
+            margin-top:50px;
+            width: 10px;
             height: calc(100% - 70px);
+            cursor: ew-resize;
+        }
+        .main{
+            position: relative;
+            margin-top:50px;
+            flex: 1;
+            left: 0;
+            background: #303030;
+            height: calc(100% - 50px);
             border-radius: 5px;
             overflow: hidden;
             display: grid;
@@ -140,8 +160,8 @@
     `;
     style.textContent = css;
     document.head.appendChild(style);
-    
-    
+
+
     //===============[add favicon]===============//
     const favicon = 'https://cdn-icons-png.flaticon.com/512/9396/9396415.png';
     function setFavicons(favImg){
@@ -153,7 +173,7 @@
     setFavicons(favicon);
     //===========================================//
 
-    
+
     //===============[ICON REMOVER]================//
     function removeClassFromAllElements(className) {
         const elements = document.querySelectorAll(`.${className}`);
@@ -196,11 +216,12 @@
 
     //========[insert sidebar and preview panel into container]=========//
     container.appendChild(sidebar);
+    container.appendChild(resizer);
     container.appendChild(main);
     //==================================================================//
 
 
-    main.textContent = "preview here";  //insert text inside preview panel.
+    main.textContent = "preview here"; //insert text inside preview panel.
 
 
     //==============[move all link elements inside sidebar]=================//
@@ -232,6 +253,39 @@
     //====================================================================//
 
 
+    //============[resizing sidebar and main with mouse]===================//
+    function initResizerFn(resizer, sidebar){
+        var x, w;
+        function rs_mouseDownHandler(e){
+            x = e.clientX;
+            var sbwidth = window.getComputedStyle(sidebar).width;
+            w = parseInt(sbwidth, 10);
+            document.addEventListener("mousemove", rs_mouseMoveHandler);
+            document.addEventListener("mouseup", rs_mouseUpHandler);
+            console.log(sbwidth);
+        }
+
+        function rs_mouseMoveHandler(e){
+            var dx = e.clientX - x;
+
+            var cw = w + dx;
+
+            if(cw < 400 && cw > 150){
+                sidebar.style.width = `${cw}px`;
+            }
+            console.log(dx);
+        }
+
+        function rs_mouseUpHandler(){
+            document.removeEventListener("mouseup", rs_mouseUpHandler);
+            document.removeEventListener("mousemove", rs_mouseMoveHandler);
+        }
+
+        resizer.addEventListener("mousedown", rs_mouseDownHandler);
+    }
+
+    initResizerFn(resizer, sidebar);
+    //=====================================================================//
 
 
 
